@@ -1,4 +1,6 @@
-%!TEX encoding = UTF-8 Unicodedd
+% !TeX spellcheck = en_US
+%!TEX encoding = UTF-8 Unicoded
+\special{dvipdfmx:config z 0}
 \documentclass[10pt,aspectratio=169]{beamer} % 169 为4:3比例
 \setbeamercovered{transparent=20}
 \usetheme[
@@ -6,7 +8,7 @@
 %  red,
 %  purple,
 %   gray,
- lightBlue,
+lightBlue,
 %  colorblocks,
 %  noframetitlerule,
 ]{chd}
@@ -14,20 +16,29 @@
 \usepackage[utf8]{inputenc}
 \usepackage{lipsum}
 \providecommand{\lishu}{\CJKfamily{song}}
-\usepackage{tikz}
-\usetikzlibrary{fadings}
-\setbeamertemplate{sections/subsections in toc}[ball]
 \usepackage{xeCJK}
 \usepackage{listings}
-\usepackage{caption}
-\usepackage{subcaption}
 \usefonttheme{professionalfonts}
 \def\mathfamilydefault{\rmdefault}
 \usepackage{amsmath}
 \usepackage{multirow}
 \usepackage{booktabs}
 \usepackage{bm}
+% 以下设置插入图片及图片编号
+\setbeamertemplate{caption}[numbered]
+\usepackage{subfigure}
 \usepackage{graphicx}
+\usepackage{float} 
+\usepackage{chngcntr}
+\counterwithin{figure}{section}
+\usepackage{caption}
+\captionsetup{figurename=图}
+% 以下设置首行缩进2字符
+\usepackage{indentfirst} 
+\setlength{\parindent}{2em} 
+
+
+% 以下设置目录格式
 % \setbeamertemplate{section in toc}{\hspace*{1em}\inserttocsectionnumber.~\inserttocsection\par}
 % \setbeamertemplate{subsection in toc}{\hspace*{2em}\inserttocsectionnumber.\inserttocsubsectionnumber.~\inserttocsubsection\par}
 % \setbeamerfont{subsection in toc}{size=\large} % 设置目录样式
@@ -36,24 +47,24 @@
 %在章节开始前放映章节目录
 \AtBeginSection[]{
 	\begin{frame}<beamer>
-		\frametitle{目录}
+		\frametitle{章节概览}
 		\textbf{\tableofcontents[currentsection]} 
 	\end{frame}
 }
 %===================================================================
 % 在子章节开始前放映子章节目录
-\AtBeginSubsection[]{%
-	\begin{frame}%
-		\frametitle{Outline}%
-		\textbf{\tableofcontents[currentsection, currentsubsection]} %
-	\end{frame}%
-}
+%\AtBeginSubsection[]{%
+	%	\begin{frame}%
+		%		\frametitle{子章节位置}%
+		%		\textbf{\tableofcontents[currentsection, currentsubsection]} %
+		%	\end{frame}%
+	%}
 %===================================================================
 %===================================================================
 %===================================================================
 %===================================================================
-\title{大标题}
-\subtitle{子标题}   % 子标题
+\title{基于Swin-Transformer的遥感影像水体提取}
+\subtitle{——以哨兵2号影像某区域为例}   % 子标题
 \author[JiaZheng Zhu]{朱家政}
 \mail{\emph zhujiazheng@chd.edu.cn}
 \institute[Chang'an University]{\large 地球科学与资源学院 \\School of Geosciences \& Resources}
@@ -62,101 +73,118 @@
 %===================================================================
 %===================================================================
 \begin{document}
+	
+	\maketitle
+	
+	%===================================================================
+	%============================FRAME===========================
+	%===================================================================
+	%===================================================================
+	\section{一、研究背景}
+	
+	\begin{frame}[c]{研究背景}
+	\begin{block}
 
-\maketitle
-
-%===================================================================
-%============================FRAME===========================
-%===================================================================
-%===================================================================
-\section{Basics}
-\subsection{Blocks}
-\begin{frame}[c]{Blocks}
-
-	The blocks are shown below
-	\begin{block}{Regular Block}
-		Content of a regular block
+				test
 	\end{block}
-
-	\begin{exampleblock}{Example Block}
-		Content of an example block
-	\end{exampleblock}
-
-	\begin{alertblock}{Alert block}
-		Content of an alert block
-	\end{alertblock}
-
-\end{frame}
-%==================================================
-\subsection{Blocks2}
-\begin{frame}[c]{Blocks2}
+	\end{frame}
+	%==================================================
+	\section{二、国内外研究现状}
+	\begin{frame}{国内外研究现状}
+		\begin{figure}[htbp] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
+			\centering %图片居中
+			\includegraphics[width=0.7\textwidth]{images/develop.pdf} %插入图片，[]中设置图片大小，{}中是图片文件名
+			\caption{湖泊水体提取方法发展过程} %最终文档中希望显示的图片标题
+			\label{Fig.main.1} %用于文内引用的标签
+		\end{figure}
+		\par
+		目视解译通过在影像上勾绘并标注湖泊水体实现提取，精度相对较高，但时间和人力成本大。因此，当前湖泊水体提取方法主要以半自动的提取方法和基于深度学习的自动提取方法为主。因此，下面重点从半自动提取方法、基于深度学习的自动提取方法两个方面论述国内外研究现状及发展动态。
+	\end{frame}
 	
-	The blocks are shown below
-	\begin{block}{Regular Block}
-		Content of a regular block
-	\end{block}
+	%=====================================
+	\subsection{遥感影像湖泊水体半自动提取方法进展}
+	\begin{frame}[c]{遥感影像湖泊水体半自动提取方法进展-传统方法}
+		
+		\begin{block}{单波段阈值法、谱间关系法、水体指数法}
+			单波段阈值法（Frazier, 2000；申邵洪, 2008）、谱间关系法（张明华,2008；于瑞宏；2011 Jia ,2018）和水体指数法（McFeeters, 1996；徐涵秋, 2005；Feyisa, 2014）主要是利用光谱曲线特征或雷达极化特征，设定阈值或建立多谱段逻辑判断规则（或模型）来区分水体和其他目标。
+		\end{block}
+		\begin{block}{数学形态学法}
+			数学形态学法（Jiang,2014；张怀利,2009）利用了膨胀、腐蚀两种基本运算描述影像的几何形态特征进行水体提取。
+		\end{block}
+		\begin{block}{多端元光谱混合分析法}
+			多端元光谱混合分析法（Gong,1993；Shen, 2003)针对混合像元，通过构建最佳端元模型，提取像元中不同地物的端元分量，用于水体提取。
+		\end{block}
+	\end{frame}
 	
-	\begin{exampleblock}{Example Block}
-		Content of an example block
-	\end{exampleblock}
-	
-	\begin{alertblock}{Alert block}
-		Content of an alert block
-	\end{alertblock}
-	
-\end{frame}
-%==================================================
-\begin{frame}{Pause test}
-	\pause
-	Hello
-	\pause[3]
-	暂停
-\end{frame}
-%=======================================================================
-\section{Basics2}
-\subsection{Blocks3}
-\begin{frame}[c]{Blocks3}
-	
-	The blocks are shown below
-	\begin{block}{Regular Block}
-		Content of a regular block
-	\end{block}
-
-\includegraphics[width=0.7\linewidth]{logo/chdlogolong}	
-	\begin{exampleblock}{Example Block}
-		Content of an example block
-	\end{exampleblock}
-	
-	\begin{alertblock}{Alert block}
-		Content of an alert block
-	\end{alertblock}
-	
-\end{frame}
-%=======================================================================
-\begin{frame}{item}
-	\begin{itemize}[<+->]
-		\item 1\\
-		      \begin{itemize}
-			      \item 2
-		      \end{itemize}
-	\end{itemize}
-	\begin{quotation}
-		123
-	\end{quotation}
-\end{frame}
-%=======================================================================
-%=======================================================================
-%=======================================================================
-%=======================================================================
-% Thank you page
-\beamertemplateshadingbackground{structure.fg!30}{structure.fg} % 两层设置渐变色
-\begin{frame}%[plain]
-	\vfill
-	\centering
-	{
-		\centering \Huge \color{white} Thank you for your attention!\\[10pt]Questions?
-	}
-	\vfill
-\end{frame}
-%===============================================================
+	\begin{frame}[c]{遥感影像湖泊水体半自动提取方法进展-机器学习的方法}
+		
+		\begin{block}{非监督分类}
+			非监督分类无需准备训练样本，主要基于水体敏感波段或水体指数等自身信息的差异，采用聚类（Gao,2012；Zhang,2019；Wang,2019）、迭代自组织（Olmanson,2008；Luo,2010）等方法进行水体提取。
+		\end{block}
+		\begin{block}{监督分类法}
+			数学形态学法（Jiang,2014；张怀利,2009）利用了膨胀、腐蚀两种基本运算描述影像的几何形态特征进行水体提取。
+		\end{block}
+		\begin{block}{多端元光谱混合分析法}
+			多端元光谱混合分析法（Gong,1993；Shen, 2003)针对混合像元，通过构建最佳端元模型，提取像元中不同地物的端元分量，用于水体提取。
+		\end{block}
+	\end{frame}
+	%==================================================
+	\subsection{基于深度学习的湖泊水体自动提取方法进展}
+	\begin{frame}{基于深度学习的湖泊水体自动提取方法进展}
+		\begin{exampleblock}{Example Block}
+			Content of an example block
+		\end{exampleblock}
+		
+		\begin{alertblock}{Alert block}
+			Content of an alert block
+		\end{alertblock}
+	\end{frame}
+	%=======================================================================
+	\section{三、研究过程}
+	\subsection{数据部分}
+	\begin{frame}[c]{Blocks3}
+		
+		The blocks are shown below
+		\begin{block}{Regular Block}
+			Content of a regular block
+		\end{block}
+		
+		\includegraphics[width=0.7\linewidth]{logo/chdlogolong}	
+		\begin{exampleblock}{Example Block}
+			Content of an example block
+		\end{exampleblock}
+		
+		\begin{alertblock}{Alert block}
+			Content of an alert block
+		\end{alertblock}
+		
+	\end{frame}
+	%=======================================================================
+	\subsection{方法部分}
+	\begin{frame}{item}
+		\begin{itemize}[<+->]
+			\item 1\\
+			\begin{itemize}
+				\item 2
+			\end{itemize}
+		\end{itemize}
+		\begin{quotation}
+			123
+		\end{quotation}
+	\end{frame}
+	%=======================================================================
+	%=======================================================================
+	%=======================================================================
+	%=======================================================================
+	% Thank you page
+	\beamertemplateshadingbackground{structure.fg!30}{structure.fg} % 两层设置渐变色
+	\begin{frame}%[plain]
+		\vfill
+		\centering
+		{
+			\centering \Huge \color{white} Thanks!\\谢谢！\\恳请大家批评指正
+		}
+		\vfill
+	\end{frame}
+	%===============================================================
 \end{document}
