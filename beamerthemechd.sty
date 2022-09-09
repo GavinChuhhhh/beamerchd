@@ -238,7 +238,8 @@ Command \noexpand\sidegraphics\MessageBreak
   \end{beamercolorbox}%
   \begin{beamercolorbox}[wd=.5\paperwidth,ht=2.65ex,dp=1.5ex,left]{subsection in head/foot}%
     \usebeamerfont{subsection in head/foot}\hspace*{2ex}\insertsubsectionhead
-  \end{beamercolorbox}}%
+  \end{beamercolorbox}
+}%
   \vskip0pt%
 \begin{tikzpicture}[overlay]
 \draw[draw=\structureA] (0,0) -- (6.3cm,0) -- (6.3cm,1mm);
@@ -326,11 +327,11 @@ Command \noexpand\sidegraphics\MessageBreak
   \begin{beamercolorbox}[sep=0.3cm,left,wd=\the\@tempdima]{frametitle}
     \usebeamerfont{frametitle}%
     \vbox{}\vskip-1ex%
-    \strut\insertframetitle\strut\par%
+    \strut\insertframetitle\strut%
     {%
       \ifx\insertframesubtitle\@empty%
       \else%
-      {\usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
+      {\  \usebeamerfont{framesubtitle}\usebeamercolor[fg]{framesubtitle}\insertframesubtitle\strut\par}%
       \fi
     }%
     \vskip-1ex%
@@ -343,7 +344,7 @@ Command \noexpand\sidegraphics\MessageBreak
 \draw[line width=1mm,draw=structure.fg,yshift=.5ex] (-0.5,0) -- (\frametitlesidebar,0);
 %--------------------------------  设置校徽标志 ------------------------------------------------------
 % 这个校徽标识会显示在幻灯片的每一页
-\node[anchor=north east] at (\frametitlesidebar-12pt,35pt) {\includegraphics[height=0.78cm]{logo/chdlogolong.png}};
+\node[anchor=north east] at (\frametitlesidebar-40pt,35pt) {\includegraphics[height=22pt]{logo/chdlogolong.png}};
 \end{tikzpicture}
 \vspace{-.5ex}
 \fi

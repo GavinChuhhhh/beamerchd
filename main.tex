@@ -71,10 +71,10 @@ lightBlue,
 	%}
 %===================================================================
 %===================================================================
-\title{基于Swin-Transformer的遥感影像水体提取}
-\subtitle{——以哨兵2号影像某区域为例}   % 子标题
-\author[JiaZheng Zhu]{朱家政}
-\mail{\emph zhujiazheng@chd.edu.cn}
+\title{基于CA-Markov的土地利用变化预测}
+\subtitle{——以陕西省商洛市为例}   % 子标题
+\author[]{汇报人\quad 朱家政\\}
+%\mail{\emph zhujiazheng@chd.edu.cn}
 \institute[Chang'an University]{\large 地球科学与资源学院 \\School of Geosciences \& Resources}
 \date{\today}
 \titlegraphic[width=3cm]{logo/chdlogobluewhite}{}  % 在首页显示校徽
@@ -83,33 +83,448 @@ lightBlue,
 \begin{document}
 	
 	\maketitle
-	
-	%===================================================================
-	%============================FRAME===========================
-	%===================================================================
-	%===================================================================
-	\section{引言}
-		\begin{frame}[c]{\secname}
-
-
+	\begin{frame}
+		\frametitle{目录}
+		\tableofcontents
 	\end{frame}
-	%==================================================
+%===================================================================
+\section{引言}
+		\begin{frame}[c]{\secname}
+		test\cite{sangSimulationLandUse2011}。
+		\end{frame}
+%===================================================================
 	\section{研究背景}
 	\subsection{研究区概况}
 		\begin{frame}[c]{\secname}{\subsecname}
+		\begin{columns}
+			\column{.6\textwidth}
+			\qquad 
+			\par\qquad  $℃$如图\ref{Fig.main.1}所示。
+			\column{.4\textwidth}
+			\begin{figure}
+				\includegraphics[width=\textwidth]{images/shangluoshi.pdf} 
+				\caption{陕西省商洛市位置}
+				\label{Fig.main.1} %用于文内引用的标签
+			\end{figure}
+		\end{columns}	
+	\end{frame}
+	\subsection{数据来源}	
+	\begin{frame}[c]{\secname}{\subsecname}
+	\begin{columns}
+	\column{.4\textwidth}
+	\qquad 级类型，分别是：耕地、林地、草地、灌木地、湿地、水体、苔原、人造地表、裸地、冰川和永久积雪。分类系统定义见表\ref{Table.main.1}。
+	\par
+	\column{.6\textwidth}
+\begin{table}[htbp]
+	\tiny
+	\centering
+	\caption{GlobeLand30分类系统}
+	    \begin{tabular}{c| m{24.78em}| c}
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{\textbf{类型}} &
+	    	\centering\textcolor[rgb]{ .2,  .2,  .2}{\textbf{内容}} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{\textbf{代码}}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{耕地} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{用于种植农作物的土地，包括水田、灌溉旱地、雨养旱地、菜地、牧草种植地、大棚用地、以种植农作物为主间有果树及其他经济乔木的土地，以及茶园、咖啡园等灌木类经济作物种植地。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{1}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{林地} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{乔木覆盖且树冠盖度超过30\%的土地，包括落叶阔叶林、常绿阔叶林、落叶针叶林、常绿针叶林、混交林，以及树冠盖度为10-30\%的疏林地。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{2}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{草地} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{天然草本植被覆盖，且盖度大于10\%的土地，包括草原、草甸、稀树草原、荒漠草原，以及城市人工草地等。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{3}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{灌木地} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{灌木覆盖且灌丛覆盖度高于30\%的土地，包括山地灌丛、落叶和常绿灌丛，以及荒漠地区覆盖度高于10\%的荒漠灌丛。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{4}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{湿地} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{位于陆地和水域的交界带，有浅层积水或土壤过湿的土地，多生长有沼生或湿生植物。包括内陆沼泽、湖泊沼泽、河流洪泛湿地、森林/灌木湿地、泥炭沼泽、红树林、盐沼等。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{5}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{水体} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{陆地范围液态水覆盖的区域，包括江河、湖泊、水库、坑塘等。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{6}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{苔原} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{寒带及高山环境下由地衣、苔藓、多年生耐寒草本和灌木植被覆盖的土地，包括灌丛苔原、禾本苔原、湿苔原、高寒苔原、裸地苔原等。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{7}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{人造地表} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{由人工建造活动形成的地表，包括城镇等各类居民地、工矿、交通设施等，不包括建设用地内部连片绿地和水体。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{8}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{裸地} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{植被覆盖度低于10\%的自然覆盖土地，包括荒漠、沙地、砾石地、裸岩、盐碱地等。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{9}
+	    	\\
+	    	\hline
+	    	\textcolor[rgb]{ .2,  .2,  .2}{冰川和永久积雪} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{由永久积雪、冰川和冰盖覆盖的土地，包括高山地区永久积雪、冰川，以及极地冰盖等。} &
+	    	\textcolor[rgb]{ .2,  .2,  .2}{10}
+	    	\\
+	    	\hline
+	    \end{tabular}%
+	\label{Table.main.1}%
+\end{table}%
+	\end{columns}	
+	\end{frame}
+
+	\begin{frame}[c]{\secname}{\subsecname}
+		GlobeLand30数据采用WGS-84坐标系。其南纬85$°$-北纬85$°$之间的区域投影方式采用UTM投影， 6度分带。对应的陕西省商洛地区数据位于其N49\_30图幅中，如图\ref{Fig.main.2}所示。
+			\begin{figure}[htbp] %H为当前位置，!htb为忽略美学标准，htbp为浮动图形
+			\centering %图片居中
+			\includegraphics[width=0.5\textwidth]{images/n49e30.png} 
+			\caption{GlobeLand30数据图幅示意} %最终文档中希望显示的图片标题
+			\label{Fig.main.2} %用于文内引用的标签
+		\end{figure}
+	\end{frame}
+	%==================================================
+	%==================================================
+	\section{研究方法}
+	\subsection{Markov模型}
+	\begin{frame}[c]{\secname}{\subsecname}
+		Markov模型是基于Markov过程理论形成的用来预测事件发生概率的一种方法。使用的前提条件是事件过程具有无后效应特征，即过程在$t_0$时刻所处的状态为已知条件，$t>t_0$时的状态与在在$t_0$\textbf{之前}所处状态无关。一定区域内，不同土地利用类型之间具有相互可转化性\cite{muller1994markov,何春阳2004中国北方未来土地利用变化情景模拟}，因此在一定条件下，土地利用的动态演变具有Markov过程的性质。
+		\par
+		其中，土地利用类型对应Markov过程中的“可能状态”，土地利用类型相互转化的面积数量或比例对应状态转移概率（转移矩阵）,公式\ref{Equa.main.1}中的$ S_{t}$即为$t$时刻状态。
+		\begin{equation}\label{Equa.main.1}
+			S_{t+1}=P_{i j} \times S_{t}
+		\end{equation}
+		\par
+		$P_{i j} $即为转移矩阵，见公式\ref{Equa.main.2}。
+		\begin{equation}\label{Equa.main.2}
+		P_{i j}=\left[\begin{array}{cccc}
+			P_{11} & P_{12} & \cdots & P_{1 n} \\
+			P_{21} & P_{22} & \cdots & P_{2 n} \\
+			\vdots & \vdots & & \vdots \\
+			P_{n 1} & P_{n 2} & \cdots & P_{n n}
+		\end{array}\right]
+		\end{equation}
+		\par
+		式中$0<=P_{ij}<1$,且$\sum_{j=1}^{n} P_{i j}=1(i, j=1,2, \cdots, n)$，即每个当前状态的土地类型向下个状态的土地类型转移的概率和为1。
+		
+	\end{frame}
+
+%=====================================
+	\subsection{元胞自动机}
+	\begin{frame}[c]{\secname}{\subsecname}
+	元胞自动机（Cellular Automata，CA）是一种时间、空间、状态都离散，空间相互作用和时间因果关系都为局部的网格动力学模型，具有模拟复杂系统时空演化过程的能力\cite{孙战利1999空间复杂性与地理元胞自动机模拟研究}。
+	\par
+	在土地利用变化的模拟中，将研究区划分为元胞,每个元胞都对应着一定的土地利用类型，土地利用变化的历史趋势 、土地适宜性以及相关的政策 、经济因素构成规则，它们共同决定着每个元胞土地利用类型转换的可能性，当可能性超过控制阈值的时候，土地利用类型将发生转化\cite{熊利亚2005基于地理元胞自动机的土地利用变化研究}。
+	\end{frame}
+%==================================================
+	\subsection{Terrset软件}
+\begin{frame}[c]{\secname}{\subsecname}
+	TerrSet\cite{TerrSetGeospatialMonitoring}是一个综合地理空间软件系统，用于监测和模拟地理空间变化以促进可持续发展。TerrSet软件结合了IDRISI地理信息系统分析和IDRISI图像处理工具等应用程序。本研究使用了Terrset中的IDRISI GIS Analysis——Change/Times Series——MARKOV和CA\_MARKOV工具。
+	\begin{figure}
+		\centering
+		\includegraphics[height=0.6\textheight]{images/jietu}
+		\caption{Terrset软件截图}
+		\label{Fig.main.3}
+	\end{figure}
+	
+\end{frame}
+%==================================================
+	\subsection{CA-Markov模型}
+	\begin{frame}[c]{\secname}{\subsecname}
+	CA-Markov模型结合了元胞自动机和马尔科夫链模型，将连续的空间数据和空间转换信息加入到马尔科夫链分析中，综合了元胞自动机模拟复杂空间变化的能力和Markov模型定量化预测的优势，提高了土地利用类型转化的精度\cite{sangSimulationLandUse2011,hamad2018predicting,subedi2013application}。	
+	\begin{table}[htbp]
+		\centering
+		\begin{tabular}{ccccccccc}
+			\hline
+			\multicolumn{1}{l}{土地利用类型} &
+			\multicolumn{1}{l}{耕地} &
+			\multicolumn{1}{l}{林地} &
+			\multicolumn{1}{l}{草地} &
+			\multicolumn{1}{l}{灌木地} &
+			\multicolumn{1}{l}{湿地} &
+			\multicolumn{1}{l}{水体} &
+			\multicolumn{1}{l}{苔原} &
+			\multicolumn{1}{l}{人造地表}
+			\\
+			\hline
+			耕地 &
+			0.7080  &
+			0.1760  &
+			0.0326  &
+			0.0000  &
+			0.0002  &
+			0.0010  &
+			0.0000  &
+			0.0822 
+			\\
+			林地 &
+			0.0696  &
+			0.8068  &
+			0.1158  &
+			0.0000  &
+			0.0001  &
+			0.0016  &
+			0.0000  &
+			0.0061 
+			\\
+			草地 &
+			0.0330  &
+			0.3782  &
+			0.5723  &
+			0.0000  &
+			0.0003  &
+			0.0010  &
+			0.0000  &
+			0.0151 
+			\\
+			灌木地 &
+			0.1429  &
+			0.1429  &
+			0.1429  &
+			0.0000  &
+			0.1429  &
+			0.1429  &
+			0.1429  &
+			0.1429 
+			\\
+			湿地 &
+			0.0298  &
+			0.0178  &
+			0.0154  &
+			0.0000  &
+			0.8087  &
+			0.1188  &
+			0.0000  &
+			0.0096 
+			\\
+			水体 &
+			0.0223  &
+			0.2269  &
+			0.2864  &
+			0.0000  &
+			0.0902  &
+			0.3351  &
+			0.0000  &
+			0.0392 
+			\\
+			苔原 &
+			0.1429  &
+			0.1429  &
+			0.1429  &
+			0.1429  &
+			0.1429  &
+			0.1429  &
+			0.0000  &
+			0.1429 
+			\\
+			人造地表 &
+			0.1708  &
+			0.0359  &
+			0.0261  &
+			0.0000  &
+			0.0001  &
+			0.0015  &
+			0.0000  &
+			0.7657 
+			\\
+			\hline
+		\end{tabular}%
+	\label{Table.2}
+		\caption{Markov变化概率矩阵}
+	\end{table}%
+\qquad 在Terrset软件中，首先使用2000、2010两期土地利用分类数据生成Markov变化矩阵，参数为默认设置（5*5的元胞空间；迭代10次）结果如表3.1所示。在Terrset中设置间隔单位为10年，因此得出的概率解释为每年每个类别向其他类别转换的概率。
+	\end{frame}
+		\begin{frame}[c]{\secname}{\subsecname}
+		使用表3.1变化矩阵的Morkov模型，利用2020年的土地利用分类数据对2030年土地利用变化做预测，依然为默认参数，结果如图\ref{Fig.3}。
+		\begin{figure}[htbp]
+			\centering
+			\subfigure[2020年土地利用分类数据]{
+				\begin{minipage}[t]{0.45\linewidth}
+					\centering
+					\includegraphics[width=\linewidth]{images/2020c}
+				\end{minipage}%
+			}%
+			\subfigure[2030年预测结果]{
+				\begin{minipage}[t]{0.45\linewidth}
+					\centering
+					\includegraphics[width=\linewidth]{images/2030c}
+				\end{minipage}%
+			}%
+			\caption{2020年土地利用分类数据与2030年预测结果对比}
+			\label{Fig.3}
+		\end{figure}
 	
 	\end{frame}
-	%=====================================
+%====================================================================
+%==================================================================== 	
+	\section{研究结果与讨论}
+%====================================================================
+	\subsection{研究结果}
+	\begin{frame}[c]{\secname}{\subsecname}
+		使用CA-Markov模型预测的2030年土地利用变化结果见表\ref{Table.3}。
+		% Table generated by Excel2LaTeX from sheet 'Sheet1'
+		\begin{table}[htbp]
+			\centering
+			\caption{2030年土地利用变化}
+			\begin{tabular}{cccccc}
+				\toprule
+				\multirow{2}[4]{*}{\textbf{土地利用类型}} &
+				\multicolumn{2}{c}{\textbf{2020年}} |&
+				\multicolumn{2}{c}{\textbf{2030年}} &
+				\multirow{2}[4]{*}{\textbf{年均变化率}}
+				\\
+				\cmidrule{2-5}     &
+				\textbf{面积/平方公里} &
+				\textbf{比例} &
+				\textbf{面积/平方公里} &
+				\textbf{比例} &
+				
+				\\
+				\midrule
+				\textbf{耕地} &
+				2514.31 &
+				12.99\% &
+				2919.76 &
+				15.09\% &
+				0.21\%
+				\\
+				\textbf{林地} &
+				14932.30 &
+				77.15\% &
+				13187.64 &
+				68.14\% &
+				-0.90\%
+				\\
+				\textbf{草地} &
+				1622.01 &
+				8.38\% &
+				2750.16 &
+				14.21\% &
+				0.58\%
+				\\
+				\textbf{湿地} &
+				15.01 &
+				0.08\% &
+				15.48 &
+				0.08\% &
+				0.00\%
+				\\
+				\textbf{水体} &
+				15.21 &
+				0.08\% &
+				11.24 &
+				0.06\% &
+				0.00\%
+				\\
+				\textbf{人造地表} &
+				255.60 &
+				1.32\% &
+				470.15 &
+				2.43\% &
+				0.11\%
+				\\
+				\bottomrule
+			\end{tabular}%
+			\label{Table.3}%
+		\end{table}%
+		其中林地面积呈减少趋势，草地、耕地、人造地表面积逐年增加。		
+	\end{frame}
+	%=======================================================================
+	\subsection{模型验证}
+	\begin{frame}[c]{\secname}{\subsecname}
+		为了确保模拟结果的可靠性，我们需要对模型进行验证。使用2000、2010两期土地利用分类数据生成的Markov变化矩阵，利用2010年土地利用分类数据预测2020年土地利用数据。通过统计预测的2020年各类用地预测面积与来自GlobeLand30的实际面积进行比较，并计算总精度$
+		E=\sum{\left[ \left| \left( m_{i0}-m_{it} \right) \right|/m_{i0} \right]}\times 100\%
+		$。验证结果见表\ref{Table.4}。
+	% Table generated by Excel2LaTeX from sheet 'Sheet3'
+	\begin{table}[htbp]
+		\centering
+		\caption{基于2020年预测结果与实际分类结果比对的模型验证}
+		\begin{tabular}{crrrc}
+			\toprule
+			\textbf{土地利用类型} &
+			\multicolumn{1}{c}{\textbf{实际面积}} &
+			\multicolumn{1}{c}{\textbf{模型预测面积}} &
+			\multicolumn{1}{c}{\textbf{面积误差}} &
+			\textbf{总精度}
+			\\
+			\midrule
+			\textbf{耕地} &
+			2514.31 &
+			3534.93 &
+			40.59\% &
+			\multirow{6}[2]{*}{\textbf{89.65\%}}
+			\\
+			\textbf{林地} &
+			14932.30 &
+			15198.52 &
+			1.78\% &
+			
+			\\
+			\textbf{草地} &
+			1622.01 &
+			2180.29 &
+			34.42\% &
+			
+			\\
+			\textbf{湿地} &
+			15.01 &
+			13.50 &
+			-10.07\% &
+			
+			\\
+			\textbf{水体} &
+			15.21 &
+			15.81 &
+			3.98\% &
+			
+			\\
+			\textbf{人造地表} &
+			255.60 &
+			411.37 &
+			60.94\% &
+			
+			\\
+			\bottomrule
+		\end{tabular}%
+		\label{Table.4}%
+	\end{table}%
+	
+	\end{frame}
 
-	%=======================================================================
-	%=======================================================================
+	%====================================================================
+	%====================================================================	
+	\subsection{不足}
+	\begin{frame}{\secname}{\subsecname}
+		\large\begin{itemize}
+			\item 未使用IOU检验预测结果的空间精度；
+			\item 利用同一模型对不同基期进行预测和验证；
+			\item 生成模型的参数及预测的参数均为默认，未经过验证；
+			\item 未阐明研究现实意义；
+			\item 模型中缺少环境驱动力因素如高程、人口、经济等。
+			
+		\end{itemize}
+	\end{frame}
 	
-	
-	%=======================================================================
-	%=======================================================================
+	%====================================================================
+	%====================================================================
+	\section{参考文献}
+	\begin{frame}[allowframebreaks]{\secname}
+			
+			\tiny\bibliography{ref.bib}
+	\end{frame}
+	%====================================================================
+	%====================================================================
 	% Thank you page
 	\beamertemplateshadingbackground{structure.fg!30}{structure.fg} % 两层设置渐变色
-		\begin{frame}%[plain]
+	\begin{frame}%[plain]
 		\vfill
 		\centering
 		{
